@@ -1,73 +1,109 @@
 var questions = [
     {
-      title: "Commonly used data types DO NOT include:",
-      choices: ["strings", "booleans", "alerts", "numbers"],
-      answer: "alerts"
+      title: "What animal lives in the ocean?",
+      choices: ["Monkeys", "Cats", "Fish", "Dogs"],
+      answer: "Fish",
     },
     {
-      title: "The condition in an if / else statement is enclosed within ____.",
-      choices: ["quotes", "curly brackets", "parentheses", "square brackets"],
-      answer: "parentheses"
+      title: "What type of animal eats Eucalyptus leaves ?",
+      choices: ["Kangaroos", "Mouse", "Koalas", "Snakes"],
+      answer: "Koalas",
     },
     {
-      title: "Arrays in JavaScript can be used to store ____.",
+      title: "What is the name of a baby Kangaroo ?",
       choices: [
-        "numbers and strings",
-        "other arrays",
-        "booleans",
-        "all of the above"
+        "Joey",
+        "Jesse",
+        "Joe",
+        "John",
       ],
-      answer: "all of the above"
+      answer: "Joey",
     },
     {
       title:
-        "String values must be enclosed within ____ when being assigned to variables.",
-      choices: ["commas", "curly brackets", "quotes", "parentheses"],
-      answer: "quotes"
+        "Which animal makes Honey ?",
+      choices: ["Snails", "Snakes", "Ants", "Bees"],
+      answer: "Bees",
     },
     {
       title:
-        "A very useful tool used during development and debugging for printing content to the debugger is:",
-      choices: ["JavaScript", "terminal / bash", "for loops", "console.log"],
-      answer: "console.log"
-    }
+        "How many lives does a cat have ?",
+      choices: ["Nine", "Twenty", "One Hundred", "Six"],
+      answer: "Nine",
+    },
   ];
-var time = 60
-let startButton = document.getElementById("startButton");
-let opening = document.querySelector("#opening");
-
-  const currentIndex = 0 
-  const titleEl = document.querySelector("#question")
-  const answerEl = document.querySelector(".answers")
-  function displayQuestion(){
-      console.log ("clicked")
-      var question = questions[currentIndex]
-    titleEl.textContent = question.title
-    answerEl.innerHTML = ""
-    question.choices.forEach(function(choice,i){
-        var choiceButton = document.createElement("button")
-        choiceButton.setAttribute("value", choice)
-        choiceButton.textContent = choice
-        choiceButton.onclick = checkAnswer
-        answerEl.appendChild(choiceButton)
-    })
+  
+  var time = 60;
+  var points = 0;
+  var startButton = document.getElementById("startButton");
+  var opening = document.querySelector("#opening");
+  var currentIndex = 0;
+  
+  var titleEl = document.querySelector("#question-title");
+  var answerEl = document.querySelector("#answers");
+  var questionsEl = document.querySelector("#questions");
+  var openingEl = document.querySelector("#opening")
+  var timer = document.getElementById("timer");
+  var lastSlide = document.querySelector("#lastSlide");
+  
+  
+  function displayQuestion() {
+  
+    openingEl.classList.add("hide")
+    var question = questions[currentIndex];
+   
+    titleEl.innerHTML = question.title;
+  
+    answerEl.innerHTML = "";
+    question.choices.forEach(function (choice, i) {
+      var choiceButton = document.createElement("button");
+      choiceButton.setAttribute("value", choice);
+      choiceButton.textContent = choice;
+      choiceButton.addEventListener("click",(e)=>{
+      checkAnswer(e.target);
+  
+      });
+      answerEl.appendChild(choiceButton);
+    });
   }
-function checkAnswer() {
-    if (this.value !== questions[currentIndex].answer){
-time-= 10
-if (time < 0 ){
-    time = 0 
-}
+  
+  function checkAnswer(btn) {
+    if (btn.value !== questions[currentIndex].answer) {
+      btn.classList.add("wrong");
+      btn.classList.add("correct");
+      time -= 10;
+      if (time < 0) {
+        time = 0;
+      }
     } else {
-
+      // if answer was correct do:
+      points++;
+      btn.classList.add("correct"); 
+      btn.classList.remove("wrong");
     }
-    currentIndex++
+    currentIndex++;
     if (currentIndex === questions.length) {
-
-    } 
-    else{
-        displayQuestion ()
+      endGame();
+    } else {
+      setTimeout(() => {
+        displayQuestion(); 
+      }, 1000)
     }
-}
+  }
 
-startButton.addEventListener("click",displayQuestion)
+  const endGame = ()=>{
+  questionsEl.classList.add("hide");
+  answerEl.classList.add("hide");
+  lastSlide.classList.remove("hide");
+  document.querySelector(".points").value = points;
+
+  }
+  
+  startButton.addEventListener("click", ()=> {
+    let timerInterval = setInterval(() => {
+      time--;
+      if(time< 0){endGame(); clearInterval(timerInterval)}
+      timer.innerHTML = time
+    },1000);
+    displayQuestion();
+  });
